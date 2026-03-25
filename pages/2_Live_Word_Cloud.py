@@ -58,8 +58,10 @@ with head2:
 left, right = st.columns([4.7, 1.3])
 with left:
     fig = make_wordcloud_figure(responses)
-    st.pyplot(fig)
-    plt.close(fig)
+if fig is not None:
+    st.pyplot(fig, use_container_width=True)
+else:
+    st.info("Waiting for responses to build the word cloud...")
 
 with right:
     st.subheader("Join live")
