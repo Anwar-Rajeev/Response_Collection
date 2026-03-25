@@ -1,0 +1,6 @@
+streamlit>=1.40.0
+pandas>=2.2.2
+matplotlib>=3.8.4
+wordcloud>=1.9.3
+qrcode[pil]>=7.4.2
+streamlit-autorefresh>=1.0.1
