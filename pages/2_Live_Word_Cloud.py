@@ -58,7 +58,7 @@ with head2:
 left, right = st.columns([4.7, 1.3])
 with left:
     fig = make_wordcloud_figure(responses)
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig)
     plt.close(fig)
 
 with right:
