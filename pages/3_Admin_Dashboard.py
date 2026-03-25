@@ -128,14 +128,12 @@ with right:
         st.write(f"**Responses:** {total}")
 
         if public_url.strip() and active:
-            if active.get("public_url") != public_url.strip():
-                update_public_url(public_url)
-                active = get_active_session()
-            student_link = build_student_link(active["public_url"], active["session_code"])
-            qr_img = make_qr_code(student_link)
-            st.image(qr_img, caption="Scan to join", use_container_width=True)
-            st.code(student_link, language=None)
-            st.page_link("pages/2_Live_Word_Cloud.py", label="Open presenter screen", icon="🎥")
+            if active.get("public_url"):
+                student_link = build_student_link(active["public_url"], active["session_code"])
+                qr_img = make_qr_code(student_link)
+
+                st.image(qr_img, caption="Scan to join", use_container_width=True)
+                st.code(student_link)
         else:
             st.info("Enter your public app URL to create the QR code.")
 
