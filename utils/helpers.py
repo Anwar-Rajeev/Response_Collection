@@ -5,6 +5,7 @@ from urllib.parse import quote
 import matplotlib.pyplot as plt
 import pandas as pd
 import qrcode
+import io
 from wordcloud import STOPWORDS, WordCloud
 
 
@@ -15,12 +16,23 @@ CUSTOM_STOPWORDS = {
 }
 
 
-def make_qr_code(url: str):
-    qr = qrcode.QRCode(version=1, box_size=10, border=2)
-    qr.add_data(url)
+def make_qr_code(data: str):
+    qr = qrcode.QRCode(
+        version=1,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
     qr.make(fit=True)
+
     img = qr.make_image(fill_color="black", back_color="white")
-    return img
+    if hasattr(img, "get_image"):
+        img = img.get_image()
+
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer
 
 
 def build_student_link(base_url: str, session_code: str) -> str:
