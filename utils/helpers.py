@@ -8,6 +8,8 @@ import qrcode
 import io
 from wordcloud import STOPWORDS, WordCloud
 
+import re
+
 
 CUSTOM_STOPWORDS = {
     "the", "and", "for", "that", "this", "with", "your", "from", "have",
@@ -59,37 +61,57 @@ def word_frequency(responses):
     return Counter(filtered)
 
 
-def make_wordcloud_figure(responses, width=1400, height=700):
-    fig, ax = plt.subplots(figsize=(16, 8))
-    ax.set_axis_off()
+def make_wordcloud_figure(responses):
+    """
+    Build a matplotlib figure for the word cloud.
+    Returns:
+        fig if words exist
+        None if no valid words exist
+    """
 
     if not responses:
-        ax.text(
-            0.5,
-            0.5,
-            "No responses yet",
-            ha="center",
-            va="center",
-            fontsize=28,
-            weight="bold",
-            transform=ax.transAxes,
-        )
-        return fig
+        return None
 
-    text_blob = " ".join(item["normalized_text"] for item in responses)
+    # Convert responses into a single cleaned text blob
+    cleaned_words = []
+
+    for r in responses:
+        if r is None:
+            continue
+
+        text = str(r).strip().lower()
+
+        if not text:
+            continue
+
+        # keep only letters, numbers, spaces
+        text = re.sub(r"[^a-zA-Z0-9\s]", "", text)
+
+        if text:
+            cleaned_words.extend(text.split())
+
+    # Remove empty words
+    cleaned_words = [w for w in cleaned_words if w.strip()]
+
+    if len(cleaned_words) == 0:
+        return None
+
+    text_blob = " ".join(cleaned_words)
+
     wc = WordCloud(
-        width=width,
-        height=height,
+        width=1200,
+        height=600,
         background_color="white",
         collocations=False,
-        min_font_size=12,
-        max_words=150,
-        prefer_horizontal=0.9,
     ).generate(text_blob)
 
+    fig, ax = plt.subplots(figsize=(14, 7))
     ax.imshow(wc, interpolation="bilinear")
-    return fig
+    ax.axis("off")
+    plt.tight_layout()
 
+    return fig
+    
 
 def fig_to_png_bytes(fig):
     buf = BytesIO()
