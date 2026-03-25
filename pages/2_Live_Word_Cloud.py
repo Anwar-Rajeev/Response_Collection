@@ -32,7 +32,12 @@ st.markdown(
 )
 
 active = get_active_session()
+if active.get("public_url"):
+    student_link = build_student_link(active["public_url"], active["session_code"])
+    qr_img = make_qr_code(student_link)
 
+    st.image(qr_img, caption="Scan to respond", use_container_width=True)
+    st.code(student_link)
 if not active:
     st.warning("No active session. Start one from the Admin Dashboard.")
     st.stop()
